@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width,initial-scale=1,shrink-to-fit=no" name="viewport">
+    <meta content="description" name="description">
+    <meta name="google" content="notranslate"/>
+    <meta content="Mashup templates have been developped by Orson.io team" name="author">
+    <title>Upload new File</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Arvo&display=swap" rel="stylesheet">
+    <!--<link rel="stylesheet" href="css/css/main.css"/>-->
+    <!--ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script>
+        function makevideo() {
+            // 1. 제목, 설명, 타입을 가져옵니다.
+            let title = $('#title').val();
+            let comment = $('#comment').val();
+            let type = $('#category').val();
+            // 2. 제목, 설명, 타입 중 하나라도 입력하지 않았을 경우 alert를 띄웁니다.
+            if (title == ''){
+                alert('제목을 입력하십시오');
+                $('.form-control title').focus();
+                return
+            }
+            else if (comment == ''){
+                alert('내용을 입력하십시오');
+                $('.form-control comment').focus();
+                return
+            }
+            else if (type == ''){
+                alert('동영상의 카테고리를 입력하십시오');
+                $('#category').focus();
+                return
+            }
+            // 3. POST /review 에 저장을 요청합니다.
+                $.ajax({
+                    type: "POST",
+                    url: "/",
+                    data: {title_give:title,comment_give:comment,type_give:type},
+                    success: function (response) {
+                        if (response["result"] == "success") {
+                            alert(response["msg"]);
+                            window.location.href('/');
+                            console.log('성공')
+                        }
+                    }
+                })
+        }
+    </script>
+</head>
+<body>
+<!--title-->
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">With textarea</span>
+    </div>
+    <textarea class="form-control" aria-label="title" id="title"></textarea>
+</div>
+<!--comment-->
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">With textarea</span>
+    </div>
+    <textarea class="form-control" aria-label="comment" id='comment'></textarea>
+</div>
+<!-- category -->
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">With textarea</span>
+    </div>
+    <textarea class="form-control" aria-label="category" id='category'></textarea>
+</div>
+<h1>Upload new File</h1>
+<form method=post enctype=multipart/form-data onclick="makevideo()">
+    <input type=file name=file onclick="makevideo()">
+    <input type=submit value=Upload onclick="makevideo()">
+</form>
+</html>

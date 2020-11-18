@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width,initial-scale=1,shrink-to-fit=no" name="viewport">
+    <meta content="description" name="description">
+    <meta name="google" content="notranslate"/>
+    <meta content="Mashup templates have been developped by Orson.io team" name="author">
+
+    <!-- Disable tap highlight on IE -->
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link href="./assets/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="./assets/favicon.ico" rel="icon">
+
+    <title>Title page</title>
+
+    <link href="./main.97292821.css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Arvo&display=swap" rel="stylesheet">
+    <!--<link rel="stylesheet" href="css/css/main.css"/>-->
+    <!--ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("form").submit(function (e) {
+                e.preventDefault();
+                var fd = new FormData($("form")[0]);
+                $.ajax({
+                    url: $(this).attr('action'),
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    crossDomain: true,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+                    },
+                    type: 'POST',
+                    success: function (data, textStatus, xhr) {
+                        $(".video-display").html('<p>' + data.html + '</p>');
+                        console.log('success:' + data.url);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        // do something with error
+                        console.log("Upload Failed for video: " + errorThrown);
+                    },
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function (evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = (evt.loaded / evt.total) * 100.0;
+                                console.log('upload completion: ' + percentComplete.toFixed(2) + '%');
+                            }
+                        }, false);
+                        return xhr;
+                    }
+                });
+            });
+
+        });
+        function uploadfinish() {
+            //1. title, comment, category 내용을 가져온다
+            let title = $('#title').val();
+            let comment = $('#comment').val();
+            let category = $('#category').val();
+            //2. 빈칸이 존재하면 alarm을 반환한다.
+            if (title == '') {
+                alert('제목을 입력하시오.')
+            }
+            else if (comment == '') {
+                alert('내용을 입력하시오.')
+            }
+            else if (category == '') {
+                alert('분류를 선택하시오.')
+            }
+            //3. video까지 모든 정보를 가져와서 db에 저장을 요청한다.
+            $.ajax({
+                type: 'POST',
+                url: '',
+                data: {title_give: title, comment_give: comment, category_give: category, video_give: video},
+                success: function (response) {
+                    if (response['result'] == 'successs') {
+                        alert(response['msg']);
+                        window.location.reload();
+                    }
+                }
+            })
+        }
+        //        function videoupload() {
+        //            //1. 업로드 버튼을 누르게 되면 컴퓨터의 폴더를 열어서 비디오를 찾는다.
+        //            //2. 올린 비디오를 화면에 출력해준다.
+        //        }
+
+        function commentlong(comment) {
+            //1. 코멘트가 너무 길 시, alarm을 울린다.
+            let comment_length = $('#comment').val();
+            if (comment_length.length > 100) {
+                alert("100자까지 기록할 수 있습니다.");
+                $('#comment').val(content.substring(0, content.length - 1));
+            }
+
+    </script>
+</head>
+<body>
+<!--title-->
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">With textarea</span>
+    </div>
+    <textarea class="form-control" aria-label="With textarea" id="title"></textarea>
+</div>
+<!--comment-->
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">With textarea</span>
+    </div>
+    <textarea class="form-control" aria-label="With textarea" id='comment'></textarea>
+</div>
+<!-- category -->
+<div class="btn-group">
+    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+        Small button
+    </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="#">chest</a>
+        <a class="dropdown-item" href="#">back</a>
+        <a class="dropdown-item" href="#">abs</a>
+        <a class="dropdown-item" href="#">leg</a>
+        <a class="dropdown-item" href="#">shoulder</a>
+        <a class="dropdown-item" href="#">dumbbell</a>
+    </div>
+</div>
+<!--video upload button-->
+<form action="https://upload.embed.ly/1/video?key=YOUR_API_KEY" method="POST" enctype="multipart/form-data">
+    <input id="video_file" name="video_file" type="file">
+    <input type="submit" class="button" value="Upload">
+</form>
+<div class="video-display"></div>
+
+<button type="button" class="btn btn-primary" onclick="uploadfinish()">Uploadfinish</button>
+
+
+</body>
+</html>
